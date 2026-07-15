@@ -1,0 +1,578 @@
+@keyframes hoverPulse {
+  0%, 100% { box-shadow: 0 0 4px #00ff00; opacity: 1; }
+  50% { box-shadow: 0 0 16px #00ff00; opacity: 0.72; }
+}
+
+@keyframes playerDamage {
+  0%, 100% { transform: translateX(0); box-shadow: 0 0 0 red; }
+  25%, 75% { transform: translateX(-7px); box-shadow: 0 0 16px red; }
+  50% { transform: translateX(7px); box-shadow: 0 0 24px red; }
+}
+
+@keyframes enemyDamage {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 yellow; }
+  50% { transform: scale(1.035); box-shadow: 0 0 26px yellow; }
+}
+
+@keyframes damageText {
+  0% { opacity: 0; transform: translate(-50%, 12px); }
+  25% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -28px); }
+}
+
+@keyframes screenFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes idleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes toastInOut {
+  0% { opacity: 0; transform: translate(-50%, -14px) scale(.96); }
+  15%, 78% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -8px) scale(.98); }
+}
+
+* { box-sizing: border-box; }
+html, body, #root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  margin: 0;
+  background: #0a0a0a;
+}
+
+body {
+  display: block;
+  font-family: monospace;
+}
+
+#root {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  text-align: initial;
+}
+button { font-family: inherit; }
+
+.screenFade { animation: screenFadeIn 0.32s ease-out; }
+.hoverPulseButton { transition: transform 0.13s ease, box-shadow 0.13s ease, opacity 0.13s ease; }
+.hoverPulseButton:hover { animation: hoverPulse 1.1s infinite; transform: translateY(-1px); }
+.hoverPulseButton:active { transform: scale(0.97); }
+.hoverPulseButton:disabled { opacity: .48; cursor: not-allowed !important; }
+.hoverPulseButton:disabled:hover { animation: none; transform: none; box-shadow: none; }
+.characterCard { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.characterCard:hover { animation: hoverPulse 1.1s infinite; transform: translateY(-3px); }
+.playerDamageAnimation { animation: playerDamage 0.42s ease-in-out; }
+.enemyDamageAnimation { animation: enemyDamage 0.42s ease-in-out; }
+.spriteIdle { animation: idleFloat 1.8s ease-in-out infinite; }
+.pixelImage { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* ゲーム中は画面全体を固定し、ページスクロールを発生させない */
+.gamePage {
+  width: min(100%, 1440px);
+  max-width: 1440px;
+  margin-inline: auto;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  padding: 8px;
+  display: grid;
+  grid-template-rows: 42px minmax(0, 1fr) 34px;
+  gap: 7px;
+  color: #00ff00;
+  background: #0a0a0a;
+  font-family: monospace;
+}
+
+.compactHeader {
+  min-width: 0;
+  padding: 0 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #111;
+  border: 1px solid #00ff00;
+}
+
+.compactTitle {
+  flex: 0 0 auto;
+  font-size: 1.12rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.compactTitle span {
+  margin-left: 10px;
+  color: yellow;
+  font-size: .88rem;
+}
+
+.headerStats {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  overflow: hidden;
+}
+
+.headerStats span {
+  padding: 4px 8px;
+  color: yellow;
+  background: #080808;
+  border: 1px solid #333;
+  white-space: nowrap;
+  font-size: .78rem;
+}
+
+.gameDashboard {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(250px, 285px) minmax(360px, 560px) minmax(250px, 285px);
+  gap: 7px;
+}
+
+.sideColumn {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.compactPanel {
+  min-width: 0;
+  padding: 8px;
+  background: #111;
+  border: 1px solid #333;
+  overflow: hidden;
+}
+
+.playerPanel { border-color: #00ff00; }
+.enemyPanel { border-color: red; text-align: center; }
+.missionCompactPanel { flex: 1 1 auto; min-height: 0; border-color: yellow; }
+.timerCompactPanel { flex: 0 0 auto; border-color: yellow; }
+.scoreCompactPanel { border-color: #00ff00; text-align: center; }
+.progressCompactPanel { flex: 1 1 auto; min-height: 94px; }
+.dangerBorder { border-color: red; }
+.dangerText { color: red !important; }
+
+.sideCharacterRow {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 7px;
+  align-items: center;
+}
+
+.sideCharacterInfo { min-width: 0; }
+.sideCharacterInfo h2,
+.enemyNameRow h2 {
+  margin: 0 0 5px;
+  font-size: .96rem;
+  line-height: 1.18;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.enemyNameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  text-align: left;
+}
+
+.enemyNameRow span {
+  color: #aaa;
+  font-size: .74rem;
+  white-space: nowrap;
+}
+
+.hpText {
+  margin: 6px 0 3px;
+  color: #eee;
+  font-size: .78rem;
+}
+
+.hpBarBackground {
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  background: #333;
+  border: 1px solid #222;
+}
+
+.abilityText {
+  margin-top: 6px;
+  color: yellow;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+.panelHeading {
+  margin-bottom: 6px;
+  color: yellow;
+  font-weight: 800;
+  letter-spacing: .05em;
+}
+
+.missionTopic {
+  margin-bottom: 5px;
+  color: #00ff00;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.missionText {
+  margin: 5px 0 7px;
+  color: #eee;
+  font-size: .82rem;
+  line-height: 1.45;
+}
+
+.smallMuted {
+  color: #999;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+.smallOutlineButton {
+  margin-top: 7px;
+  padding: 5px 8px;
+  color: yellow;
+  background: transparent;
+  border: 1px solid yellow;
+  cursor: pointer;
+  font-size: .72rem;
+}
+
+.compactHint {
+  margin-top: 6px;
+  padding: 6px;
+  color: yellow;
+  background: #080808;
+  border-left: 3px solid yellow;
+  font-size: .72rem;
+  line-height: 1.4;
+}
+
+.timerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: yellow;
+}
+
+.timerRow strong { font-size: 1.2rem; }
+
+.bigScore {
+  margin: 3px 0 5px;
+  color: #00ff00;
+  font-size: 1.75rem;
+  font-weight: 900;
+}
+
+.scoreRules {
+  color: #999;
+  font-size: .66rem;
+  line-height: 1.35;
+}
+
+.progressDots {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin: 8px 0 9px;
+}
+
+.progressDot {
+  height: 9px;
+  background: #333;
+  border: 1px solid #555;
+}
+
+.progressDone { background: #00a000; border-color: #00ff00; }
+.progressCurrent { background: yellow; border-color: yellow; box-shadow: 0 0 8px yellow; }
+.progressWrong { outline: 1px solid red; }
+
+.questionPanelCompact {
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  display: grid;
+  grid-template-rows: 32px minmax(0, 1fr) 42px;
+  gap: 7px;
+  background: #090909;
+  border: 1px dotted #00ff00;
+  overflow: hidden;
+}
+
+.questionPanelHeader {
+  min-width: 0;
+  padding: 0 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: yellow;
+  background: #111;
+  border: 1px solid #333;
+  font-size: .83rem;
+  font-weight: 800;
+}
+
+.questionPanelHeader span {
+  margin-left: 8px;
+  color: #00ff00;
+  font-size: .72rem;
+  font-weight: 400;
+}
+
+.questionMiniStatus {
+  color: #aaa;
+  font-size: .7rem;
+  white-space: nowrap;
+}
+
+.questionContent {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: #00aa00 #111;
+}
+
+.questionSectionTitle {
+  margin: 4px 0 5px;
+  color: #ddd;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.codeEditor {
+  min-height: 112px;
+  overflow: auto;
+  padding: 5px 0;
+  background: #050505;
+  border: 1px solid #333;
+  box-shadow: inset 0 0 8px #000;
+}
+
+.codeEditorCompact {
+  min-height: 88px;
+  max-height: 168px;
+}
+
+.codePlaceholder {
+  padding: 5px 10px;
+  color: #555;
+  font-size: .75rem;
+}
+
+.codeLine {
+  min-height: 23px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+}
+
+.lineNumber {
+  padding-right: 7px;
+  color: #555;
+  text-align: right;
+  border-right: 1px solid #333;
+  user-select: none;
+  font-size: .72rem;
+}
+
+.codeText {
+  padding-left: 9px;
+  color: #00ff00;
+  white-space: pre;
+  font-family: Consolas, Monaco, monospace;
+  font-size: .78rem;
+}
+
+.choiceContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-content: flex-start;
+}
+
+.choiceButton {
+  padding: 7px 9px;
+  color: #00ff00;
+  background: #111;
+  border: 1px solid #00ff00;
+  cursor: pointer;
+  font-size: .75rem;
+  line-height: 1.25;
+}
+
+.choiceSelected {
+  color: #000;
+  background: #00ff00;
+  font-weight: 800;
+}
+
+.actionBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.executeButton,
+.clearButton,
+.quitButton {
+  height: 34px;
+  padding: 0 13px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: .75rem;
+}
+
+.executeButton { color: #000; background: #00ff00; border: 0; }
+.clearButton { color: #00ff00; background: transparent; border: 1px solid #00ff00; }
+.quitButton { color: #aaa; background: transparent; border: 1px solid #555; }
+
+.systemBar {
+  min-width: 0;
+  padding: 0 10px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  color: yellow;
+  background: #111;
+  border: 1px solid #333;
+  font-size: .75rem;
+}
+
+.systemBar div {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feedbackToast {
+  position: fixed;
+  top: 54px;
+  left: 50%;
+  z-index: 1200;
+  min-width: 210px;
+  padding: 10px 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #111;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 24px rgba(0, 255, 0, .3);
+  animation: toastInOut .9s ease forwards;
+  pointer-events: none;
+}
+
+.feedbackToast strong { font-size: 1.1rem; }
+.feedbackToast span { color: yellow; font-size: .78rem; }
+.feedbackToast.wrong,
+.feedbackToast.timeout {
+  border-color: red;
+  box-shadow: 0 0 24px rgba(255, 0, 0, .32);
+}
+.feedbackToast.wrong strong,
+.feedbackToast.timeout strong { color: red; }
+.feedbackToast.correct strong { color: #00ff00; }
+
+.floatingDamage {
+  position: fixed;
+  top: 41%;
+  left: 50%;
+  z-index: 1100;
+  font-size: 1.15rem;
+  font-weight: 900;
+  text-align: center;
+  pointer-events: none;
+}
+
+.damagePopup { animation: damageText .75s ease-out; color: red; }
+.attackPopup { animation: damageText .75s ease-out; color: yellow; }
+
+@media (max-height: 720px) and (min-width: 1001px) {
+  .gamePage { grid-template-rows: 38px minmax(0, 1fr) 30px; padding: 6px; gap: 5px; }
+  .gameDashboard { gap: 6px; grid-template-columns: 240px minmax(340px, 500px) 240px; }
+  .compactPanel { padding: 6px; }
+  .sideCharacterRow { grid-template-columns: 82px minmax(0, 1fr); }
+  .sideCharacterRow .pixelImage { width: 78px !important; height: 78px !important; }
+  .enemyPanel .pixelImage { width: 86px !important; height: 86px !important; }
+  .missionText { font-size: .75rem; line-height: 1.35; }
+  .compactHint { font-size: .67rem; }
+  .codeEditorCompact { max-height: 138px; min-height: 75px; }
+  .choiceButton { padding: 5px 7px; font-size: .7rem; }
+  .questionPanelCompact { grid-template-rows: 28px minmax(0, 1fr) 38px; padding: 6px; gap: 5px; }
+}
+
+@media (max-width: 1000px) {
+  .gamePage {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+    display: block;
+  }
+
+  .compactHeader { min-height: 44px; flex-wrap: wrap; padding: 7px; }
+  .headerStats { flex-wrap: wrap; overflow: visible; }
+  .gameDashboard { grid-template-columns: 1fr; margin: 7px 0; }
+  .questionPanelCompact { min-height: 560px; }
+  .systemBar { min-height: 36px; }
+  .responsiveThreeColumn,
+  .responsiveTwoColumn { grid-template-columns: 1fr !important; }
+}
+
+
+/* 中央の問題エリアをコンパクトにし、左右の情報欄を見やすくする調整 */
+.gameDashboard {
+  width: 100%;
+  margin-inline: auto;
+  justify-content: center;
+}
+
+.questionPanel,
+.centerPanel,
+.problemPanel {
+  min-width: 0;
+  max-width: 560px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.questionPanel button,
+.centerPanel button,
+.problemPanel button {
+  padding: 7px 10px;
+}
+
+.questionPanel pre,
+.questionPanel code,
+.centerPanel pre,
+.centerPanel code {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1100px) {
+  .gameDashboard {
+    grid-template-columns: minmax(220px, 260px) minmax(330px, 500px) minmax(220px, 260px);
+  }
+}

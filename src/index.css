@@ -1,0 +1,45 @@
+/*
+  Binary Breach 全体のリセット。
+  Vite初期状態の body { display: flex } や #root の最大幅が残ると、
+  ゲーム画面が左右どちらかへ寄って見えるため、ここで解除します。
+*/
+
+:root {
+  font-family: monospace;
+  color: #00ff00;
+  background: #0a0a0a;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  display: block;
+  min-width: 320px;
+  background: #0a0a0a;
+}
+
+#root {
+  max-width: none;
+  padding: 0;
+  text-align: initial;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
