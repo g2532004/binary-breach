@@ -320,7 +320,10 @@ function App() {
           return
         }
 
-        setTimeLeft(currentMaxTime)
+        if (result === 'timeout') {
+          setTimeLeft(currentMaxTime)
+        }
+
         setShowHint(currentCharacter.autoHint)
         setHintUsed(false)
         setIsTransitioning(false)
@@ -581,7 +584,7 @@ function App() {
       <div style={pageCenterStyle} className="screenFade">
         <div style={titlePanelStyle}>
           <h1 style={{ fontSize: '2.6rem', marginBottom: 8 }}>
-            💻 Binary Breach
+            💻 HACKER'S MISSION
           </h1>
           <h2 style={{ color: 'yellow', marginTop: 0 }}>
             Code the program. Break the bugs.
@@ -893,7 +896,7 @@ function App() {
     <div className="gamePage screenFade">
       <header className="compactHeader">
         <div className="compactTitle">
-          💻 Binary Breach
+          💻 HACKER'S MISSION
           <span>{languageLabels[selectedLanguage]}</span>
         </div>
 
