@@ -80,6 +80,7 @@ function App() {
   const [gameOverReason, setGameOverReason] = useState('')
   const [toast, setToast] = useState<FeedbackToast | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
 
   const [playerDamaged, setPlayerDamaged] = useState(false)
   const [enemyDamaged, setEnemyDamaged] = useState(false)
@@ -498,6 +499,58 @@ function App() {
     setMessage('学習するプログラミング言語を選択してください。')
   }
 
+  const renderHelpModal = () => {
+    if (!showHelp) return null
+
+    return (
+      <div className="helpOverlay" onClick={() => setShowHelp(false)}>
+        <section
+          className="helpModal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="help-title"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="helpModalHeader">
+            <h2 id="help-title">遊び方</h2>
+            <button
+              className="helpCloseButton hoverPulseButton"
+              onClick={() => setShowHelp(false)}
+              aria-label="遊び方を閉じる"
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="helpModalBody">
+            <div className="helpSection">
+              <h3>ゲームの流れ</h3>
+              <ol>
+                <li>言語・難易度・キャラクターを選びます。</li>
+                <li>問題に答えると敵へダメージを与えます。</li>
+                <li>2問正解すると敵を撃破できます。</li>
+                <li>不正解や時間切れでは20ダメージを受けます。</li>
+                <li>同じ敵に3回ミスするとゲームオーバーです。</li>
+              </ol>
+            </div>
+
+            <div className="helpSection">
+              <h3>問題形式</h3>
+              <p><strong>並び替え：</strong>必要なコードだけを、実行する順番に選びます。使わない選択肢もあります。</p>
+              <p><strong>穴埋め：</strong>空欄に入る選択肢を1つ選びます。</p>
+              <p><strong>間違い探し：</strong>間違っている部分を1つ選びます。</p>
+            </div>
+
+            <div className="helpSection">
+              <h3>スコア</h3>
+              <p>早く正解し、ミスやヒントの使用を減らすほど高得点になります。詳しい解説はクリア後に確認できます。</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    )
+  }
+
   const renderQuestionArea = () => {
     if (!currentQuestion) return null
 
@@ -508,6 +561,7 @@ function App() {
           <CodeEditorView codeBlocks={codeBlocks} compact />
 
           <div className="questionSectionTitle">コードフラグメント</div>
+          <div className="questionInstruction">必要なコードだけを、正しい順番で選んでください。<strong> すべての選択肢を使う必要はありません。</strong></div>
           <div className="choiceContainer">
             {currentQuestion.fragments?.map((fragment, index) => (
               <button
@@ -534,6 +588,7 @@ function App() {
           />
 
           <div className="questionSectionTitle">空欄に入るもの</div>
+          <div className="questionInstruction">空欄に入る選択肢を1つ選んでください。</div>
           <div className="choiceContainer">
             {currentQuestion.choices?.map((choice, index) => (
               <button
@@ -561,6 +616,7 @@ function App() {
         />
 
         <div className="questionSectionTitle">間違っている部分</div>
+        <div className="questionInstruction">間違っている部分を1つ選んでください。</div>
         <div className="choiceContainer">
           {currentQuestion.choices?.map((choice, index) => (
             <button
@@ -582,13 +638,11 @@ function App() {
   if (screen === 'start') {
     return (
       <div style={pageCenterStyle} className="screenFade">
-        <div style={titlePanelStyle}>
+        <div style={titlePanelStyle} className="titlePanelWithHelp">
+          <button className="helpButton hoverPulseButton" onClick={() => setShowHelp(true)} aria-label="遊び方を開く" title="遊び方">?</button>
           <h1 style={{ fontSize: '2.6rem', marginBottom: 8 }}>
             💻 HACKER'S MISSION
           </h1>
-          <h2 style={{ color: 'yellow', marginTop: 0 }}>
-            Code the program. Break the bugs.
-          </h2>
           <p style={descriptionStyle}>
             学習するプログラミング言語を選択してください。
           </p>
@@ -606,6 +660,7 @@ function App() {
             ))}
           </div>
         </div>
+        {renderHelpModal()}
       </div>
     )
   }
@@ -914,6 +969,7 @@ function App() {
           </span>
           <span>{currentQuestion.topic}</span>
           <span>SCORE {score}</span>
+          <button className="headerHelpButton hoverPulseButton" onClick={() => setShowHelp(true)} aria-label="遊び方を開く" title="遊び方">?</button>
         </div>
       </header>
 
@@ -1118,6 +1174,8 @@ function App() {
           <span>{toast.detail}</span>
         </div>
       )}
+
+      {renderHelpModal()}
     </div>
   )
 }
