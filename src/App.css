@@ -604,3 +604,24 @@ button { font-family: inherit; }
 .helpSection ol { margin: 0; padding-left: 24px; }
 .helpSection strong { color: yellow; }
 @media (max-height: 720px) and (min-width: 1001px) { .missionText { font-size: .86rem; } .questionInstruction { padding: 5px 7px; font-size: .78rem; } .choiceButton { padding: 6px 8px; font-size: .8rem; } .codeText { font-size: .82rem; } }
+
+
+/* 発表用デモモード表示 */
+.demoModeBadge {
+  width: fit-content;
+  margin: 8px auto 14px;
+  padding: 6px 12px;
+  color: #000;
+  background: yellow;
+  border: 1px solid yellow;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.demoModeMiniBadge {
+  padding: 2px 7px;
+  color: #000;
+  background: yellow;
+  border: 1px solid yellow;
+  font-weight: 800;
+}

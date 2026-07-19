@@ -16,6 +16,7 @@ import {
   MAX_MISTAKES_PER_ENEMY,
   WRONG_SCORE_PENALTY,
   FEEDBACK_DELAY,
+  DEMO_MODE,
   getQuestionTime
 } from './config/gameConfig'
 import { languageLabels } from './data/languages'
@@ -643,6 +644,11 @@ function App() {
           <h1 style={{ fontSize: '2.6rem', marginBottom: 8 }}>
             💻 HACKER'S MISSION
           </h1>
+          {DEMO_MODE && (
+            <div className="demoModeBadge">
+              DEMO MODE：2問・敵1体・短縮タイマー
+            </div>
+          )}
           <p style={descriptionStyle}>
             学習するプログラミング言語を選択してください。
           </p>
